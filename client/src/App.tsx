@@ -1,33 +1,34 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import logo from "./assets/logo.png";
 
 function App() {
   const [count, setCount] = useState(0);
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className="flex justify-center">
+        <img src={logo} alt="Logo" />
       </div>
-      <div className="text-xl">Vite + React</div>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+      <div className="flex flex-col justify-center">
+        <div className="flex flex-row justify-evenly ">
+          <div className="card">
+            <h1 className="font-bold text-xl"> Number of Players</h1>
+            <button onClick={() => setCount((count) => count + 1)}>
+              count is {count}
+            </button>
+          </div>
+          <div className="card">
+            <h1 className="font-bold text-xl"> Players </h1>
+          </div>
+          <div className="card">
+            <h1 className="font-bold text-xl"> Number of Words</h1>
+          </div>
+        </div>
+        <button className="rounded-lg mt-16 p-5 mx-auto bg-teal-950">
+          {" "}
+          START GAME{" "}
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   );
 }
