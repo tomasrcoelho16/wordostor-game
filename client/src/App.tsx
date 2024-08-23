@@ -24,9 +24,8 @@ function App() {
             <h1 className="font-bold text-xl"> Number of Words</h1>
           </div>
         </div>
-        <button className="rounded-lg mt-16 p-5 mx-auto bg-teal-950">
-          {" "}
-          START GAME{" "}
+        <button className="mt-16 p-5 mx-auto text-black font-bold hover:text-xl">
+          START GAME
         </button>
       </div>
     </>
