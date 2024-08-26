@@ -6,7 +6,7 @@ import Mobile from './Mobile.tsx'
 import './index.css'
 
 createRoot(document.getElementById('root')!).render(
-    <StrictMode>
-        <Mobile />
-    </StrictMode>,
+  <StrictMode>
+    <Mobile />
+  </StrictMode>,
 )
