@@ -1,0 +1,10 @@
+
+[0m[2m[35m$[0m [2m[1mtsc -b && vite build[0m
+[96msrc/Ingame.tsx[0m:[93m5[0m:[93m16[0m - [91merror[0m[90m TS6133: [0m'setWord' is declared but its value is never read.
+
+[7m5[0m   const [word, setWord] = useState("Impostor");
+[7m [0m [91m               ~~~~~~~[0m
+
+
+Found 1 error.
+
