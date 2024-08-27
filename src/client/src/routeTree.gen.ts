@@ -13,52 +13,52 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as IndexImport } from './routes/index'
 
 // Create Virtual Routes
 
-const LobbyLazyImport = createFileRoute('/Lobby')()
-const GameLazyImport = createFileRoute('/Game')()
-const AppLazyImport = createFileRoute('/App')()
+const LobbyLazyImport = createFileRoute('/lobby')()
+const GameLazyImport = createFileRoute('/game')()
 
 // Create/Update Routes
 
 const LobbyLazyRoute = LobbyLazyImport.update({
-  path: '/Lobby',
+  path: '/lobby',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/Lobby.lazy').then((d) => d.Route))
+} as any).lazy(() => import('./routes/lobby.lazy').then((d) => d.Route))
 
 const GameLazyRoute = GameLazyImport.update({
-  path: '/Game',
+  path: '/game',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/Game.lazy').then((d) => d.Route))
+} as any).lazy(() => import('./routes/game.lazy').then((d) => d.Route))
 
-const AppLazyRoute = AppLazyImport.update({
-  path: '/App',
+const IndexRoute = IndexImport.update({
+  path: '/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/App.lazy').then((d) => d.Route))
+} as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/App': {
-      id: '/App'
-      path: '/App'
-      fullPath: '/App'
-      preLoaderRoute: typeof AppLazyImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/Game': {
-      id: '/Game'
-      path: '/Game'
-      fullPath: '/Game'
+    '/game': {
+      id: '/game'
+      path: '/game'
+      fullPath: '/game'
       preLoaderRoute: typeof GameLazyImport
       parentRoute: typeof rootRoute
     }
-    '/Lobby': {
-      id: '/Lobby'
-      path: '/Lobby'
-      fullPath: '/Lobby'
+    '/lobby': {
+      id: '/lobby'
+      path: '/lobby'
+      fullPath: '/lobby'
       preLoaderRoute: typeof LobbyLazyImport
       parentRoute: typeof rootRoute
     }
@@ -68,7 +68,7 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren({
-  AppLazyRoute,
+  IndexRoute,
   GameLazyRoute,
   LobbyLazyRoute,
 })
@@ -81,19 +81,19 @@ export const routeTree = rootRoute.addChildren({
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/App",
-        "/Game",
-        "/Lobby"
+        "/",
+        "/game",
+        "/lobby"
       ]
     },
-    "/App": {
-      "filePath": "App.lazy.tsx"
+    "/": {
+      "filePath": "index.tsx"
     },
-    "/Game": {
-      "filePath": "Game.lazy.tsx"
+    "/game": {
+      "filePath": "game.lazy.tsx"
     },
-    "/Lobby": {
-      "filePath": "Lobby.lazy.tsx"
+    "/lobby": {
+      "filePath": "lobby.lazy.tsx"
     }
   }
 }

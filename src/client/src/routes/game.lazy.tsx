@@ -2,12 +2,13 @@ import { useState } from 'react'
 import logo from '../assets/logo.png'
 import { createLazyFileRoute } from '@tanstack/react-router'
 
-export const Route = createLazyFileRoute('/Game')({
+export const Route = createLazyFileRoute('/game')({
   component: Card,
 })
 
 function Card() {
   const [word, setWord] = useState('Impostor')
+
   return (
     <>
       <div className="flip-box">

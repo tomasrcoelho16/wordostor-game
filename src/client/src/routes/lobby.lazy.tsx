@@ -2,7 +2,7 @@ import { useState } from 'react'
 import logo from '../assets/logo.png'
 import { createLazyFileRoute } from '@tanstack/react-router'
 
-export const Route = createLazyFileRoute('/Lobby')({
+export const Route = createLazyFileRoute('/lobby')({
   component: Menu,
 })
 
