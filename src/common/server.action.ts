@@ -5,6 +5,7 @@ export enum ServerAction {
 export type PlayerInfo = {
   username: string
   playerWords: string[]
+  ready: false
 }
 
 export type ServerActionAdminUpdatePlayerList = {

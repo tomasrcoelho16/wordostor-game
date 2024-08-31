@@ -46,6 +46,7 @@ wss.on('connection', (socket) => {
       switch (data.action) {
         case ClientAction.REGISTER_ADMIN:
           admin = socket
+          sendPlayerListAdmin()
           break
         case ClientAction.USERNAME_UPDATE:
           playerList.set(playerId, {
