@@ -1,19 +1,13 @@
 export enum ClientAction {
-  CLIENT_ACK_CONNECTION = 'CLIENT_ACK_CONNECTION',
   USERNAME_UPDATE = 'USERNAME_UPDATE',
+  REGISTER_ADMIN = 'REGISTER_ADMIN',
 }
 
 export type ClientActionUsernameUpdate = {
   action: ClientAction.USERNAME_UPDATE
-  payload: {
-    playerId: string
-    username: string
-  }
+  payload: string
 }
 
-export type ClientActionAckConnection = {
-  action: ClientAction.CLIENT_ACK_CONNECTION
-  payload: {
-    playerId: string
-  }
+export type ClientActionRegisterAdmin = {
+  action: ClientAction.REGISTER_ADMIN
 }

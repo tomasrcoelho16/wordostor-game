@@ -1,13 +1,30 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import logo from '../assets/logo.png'
 import { createLazyFileRoute } from '@tanstack/react-router'
+import { registerAdmin } from '../services/web-socket.connection'
 
 export const Route = createLazyFileRoute('/admin')({
   component: App,
 })
 
+registerAdmin()
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [playerList, setPlayerList] = useState([])
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handler = (event: any) => {
+      console.log(event.detail)
+      setPlayerList(event.detail.playerList)
+    }
+
+    document.addEventListener('UPDATE_PLAYER_LIST', handler)
+
+    return () => {
+      document.removeEventListener('UPDATE_PLAYER_LIST', handler)
+    }
+  }, [])
 
   return (
     <>
@@ -18,12 +35,16 @@ function App() {
         <div className="flex flex-row justify-evenly ">
           <div className="card">
             <h1 className="font-bold text-xl"> Number of Players</h1>
-            <button onClick={() => setCount((count) => count + 1)}>
-              count is {count}
-            </button>
+            <span>{playerList.length}</span>
           </div>
           <div className="card">
             <h1 className="font-bold text-xl"> Players </h1>
+            <ul>
+              {playerList.map(({ username }) => (
+                <li>{username}</li>
+              ))}
+              {playerList.length === 0 && <span>No players yet!</span>}
+            </ul>
           </div>
           <div className="card">
             <h1 className="font-bold text-xl"> Number of Words</h1>
