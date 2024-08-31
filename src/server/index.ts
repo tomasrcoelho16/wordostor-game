@@ -82,7 +82,3 @@ wss.on('connection', (socket) => {
     }
   })
 })
-
-setInterval(() => {
-  console.log(playerList.keys())
-}, 2000)
