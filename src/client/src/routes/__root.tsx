@@ -4,7 +4,7 @@ import '../index.css'
 export const Route = createRootRoute({
   component: () => (
     <>
-      <div className="p-2 flex gap-2 bg-black">
+      <div className="p-2 flex gap-2">
         <Link to="/lobby" className="text-black">
           Lobby
         </Link>{' '}

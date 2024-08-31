@@ -52,7 +52,10 @@ function Menu() {
           value={username}
           onChange={({ target: { value } }) => setUsername(value)}
         />
-        <button onClick={handleUsernameUpdate.bind(null, username)}>
+        <button
+          className="mt-12S text-xl text-black p-2 self-center hover:font-bold"
+          onClick={handleUsernameUpdate.bind(null, username)}
+        >
           Update
         </button>
       </div>

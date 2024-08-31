@@ -55,13 +55,13 @@ wss.on('connection', (socket) => {
     }
   })
 
-  setInterval(() => {
-    socketTest.forEach((sc, index) => {
-      const data = {
-        action: 'ASDFASDF',
-        payload: index,
-      }
-      sc.send(JSON.stringify(data))
-    })
-  }, 5000)
+  // setInterval(() => {
+  //   socketTest.forEach((sc, index) => {
+  //     const data = {
+  //       action: 'ASDFASDF',
+  //       payload: index,
+  //     }
+  //     sc.send(JSON.stringify(data))
+  //   })
+  // }, 5000)
 })

@@ -19,6 +19,7 @@ import { Route as IndexImport } from './routes/index'
 
 const LobbyLazyImport = createFileRoute('/lobby')()
 const GameLazyImport = createFileRoute('/game')()
+const AppLazyImport = createFileRoute('/App')()
 
 // Create/Update Routes
 
@@ -31,6 +32,11 @@ const GameLazyRoute = GameLazyImport.update({
   path: '/game',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/game.lazy').then((d) => d.Route))
+
+const AppLazyRoute = AppLazyImport.update({
+  path: '/App',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/App.lazy').then((d) => d.Route))
 
 const IndexRoute = IndexImport.update({
   path: '/',
@@ -46,6 +52,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/App': {
+      id: '/App'
+      path: '/App'
+      fullPath: '/App'
+      preLoaderRoute: typeof AppLazyImport
       parentRoute: typeof rootRoute
     }
     '/game': {
@@ -69,6 +82,7 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
+  AppLazyRoute,
   GameLazyRoute,
   LobbyLazyRoute,
 })
@@ -82,12 +96,16 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/App",
         "/game",
         "/lobby"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/App": {
+      "filePath": "App.lazy.tsx"
     },
     "/game": {
       "filePath": "game.lazy.tsx"
