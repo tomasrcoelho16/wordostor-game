@@ -1,40 +1,11 @@
 import { useState } from 'react'
 import logo from '../assets/logo.png'
 import { createLazyFileRoute } from '@tanstack/react-router'
+import { handleUsernameUpdate } from '../services/web-socket.connection'
 
 export const Route = createLazyFileRoute('/lobby')({
   component: Menu,
 })
-
-let playerId: number
-
-const socket = new WebSocket('ws://localhost:3070')
-
-// Listen for messages
-socket.addEventListener('message', (event) => {
-  const data = JSON.parse(event.data)
-  if (data) {
-    switch (data.action) {
-      case 'SETUP':
-        playerId = data.payload
-        break
-      default:
-        console.log(data)
-    }
-  }
-  console.log('Message from server ', event.data)
-})
-
-function handleUsernameUpdate(username: string) {
-  console.log(`playerId: ${playerId}`)
-  const data = {
-    action: 'USERNAME_UPDATE',
-    playerId,
-    payload: username,
-  }
-
-  socket.send(JSON.stringify(data))
-}
 
 function Menu() {
   const [username, setUsername] = useState('')

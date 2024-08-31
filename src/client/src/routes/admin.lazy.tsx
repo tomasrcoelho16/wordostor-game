@@ -2,36 +2,9 @@ import { useState } from 'react'
 import logo from '../assets/logo.png'
 import { createLazyFileRoute } from '@tanstack/react-router'
 
-export const Route = createLazyFileRoute('/App')({
+export const Route = createLazyFileRoute('/admin')({
   component: App,
 })
-
-let inGame: boolean
-
-const socket = new WebSocket('ws://localhost:3070')
-
-// Listen for messages
-socket.addEventListener('message', (event) => {
-  const data = JSON.parse(event.data)
-  if (data) {
-    switch (data.action) {
-      case 'SETUP':
-        playerId = data.payload
-        break
-      default:
-        console.log(data)
-    }
-  }
-  console.log('Message from server ', event.data)
-})
-
-function handleStartGame() {
-  console.log(`Starting Game :)`)
-  const data = {
-    action: 'GAME_START',
-  }
-  socket.send(JSON.stringify(data))
-}
 
 function App() {
   const [count, setCount] = useState(0)
@@ -58,7 +31,7 @@ function App() {
         </div>
         <button
           className="mt-16 p-5 mx-auto text-black font-bold hover:text-xl"
-          onClick={handleStartGame.bind(null)}
+          // onClick={handleStartGame.bind(null)}
         >
           START GAME
         </button>
