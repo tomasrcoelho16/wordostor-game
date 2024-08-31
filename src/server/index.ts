@@ -1,7 +1,11 @@
 import { WebSocketServer, WebSocket } from 'ws'
-import { ServerAckAction, ServerAction } from '../common/constants'
 import { v4 as uuidv4 } from 'uuid'
 import { ClientAction } from '../common/client.action'
+import {
+  PlayerInfo,
+  ServerAction,
+  ServerActionAdminUpdatePlayerList,
+} from '../common/server.action'
 
 const serverId = uuidv4()
 
@@ -28,57 +32,49 @@ const wss = new WebSocketServer({
   },
 })
 
-type PlayerInfo = {
-  socket: WebSocket
-  username: string
-  playerWords: string[]
-}
-
 // const adminList: WebSocket
+let admin: WebSocket | undefined
 const playerList: Map<string, PlayerInfo> = new Map()
 
 wss.on('connection', (socket) => {
   const playerId = uuidv4()
 
-  const data: ServerAckAction = {
-    action: ServerAction.SERVER_ACK_CONNECTION,
-    payload: {
-      serverId,
-      playerId,
-    },
-  }
-
-  socket.send(JSON.stringify(data))
-
   socket.on('message', (receivedData) => {
-    console.log(`just received ${receivedData}`)
-
     const data = JSON.parse(receivedData.toString())
 
     if (data && data.hasOwnProperty('action')) {
-      const playerId = data.payload.playerId
       switch (data.action) {
-        case ClientAction.CLIENT_ACK_CONNECTION:
-          if (!playerList.has(playerId)) {
-            playerList.set(playerId, {
-              socket,
-              username: '',
-              playerWords: [],
-            })
-          }
+        case ClientAction.REGISTER_ADMIN:
+          admin = socket
           break
         case ClientAction.USERNAME_UPDATE:
-          const playerInfo = playerList.get(playerId)
-          if (playerList.has(playerId) && playerInfo) {
-            playerList.set(playerId, {
-              ...playerInfo,
-              username: data.payload.username,
-            })
-          }
+          playerList.set(playerId, {
+            ...playerList.get(playerId)!,
+            username: data.payload,
+          })
+          console.log(`Updated ${playerId} username to "${data.payload}"`)
+          sendPlayerListAdmin()
           break
         default:
           break
       }
     }
   })
+
+  socket.on('close', () => {
+    console.log(`Player ${playerId} left!`)
+    playerList.delete(playerId)
+    sendPlayerListAdmin()
+  })
 })
+
+function sendPlayerListAdmin() {
+  const action: ServerActionAdminUpdatePlayerList = {
+    action: ServerAction.ADMIN_UPDATE_PLAYER_LIST,
+    payload: Array.from(playerList).map(([playerId, { username }]) => ({
+      playerId,
+      username,
+    })),
+  }
+  admin?.send(JSON.stringify(action))
+}
