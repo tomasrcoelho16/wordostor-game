@@ -1,21 +1,26 @@
 import { useEffect, useState } from 'react'
 import logo from '../assets/logo.png'
 import { createLazyFileRoute } from '@tanstack/react-router'
-import { registerAdmin } from '../services/web-socket.connection'
+import {
+  actionStartGame,
+  registerAdmin,
+} from '../services/web-socket.connection'
+import { ServerActionAdminUpdatePlayerList } from '../../../common/server.action'
 
 export const Route = createLazyFileRoute('/admin')({
   component: App,
 })
 
-registerAdmin()
-
 function App() {
-  const [playerList, setPlayerList] = useState([])
+  const [playerList, setPlayerList] = useState<
+    ServerActionAdminUpdatePlayerList['payload']
+  >([])
 
   useEffect(() => {
+    registerAdmin()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handler = (event: any) => {
-      console.log(event.detail)
+      console.log('asdfjasdkfhasdfhasd> >>>>>>>>>>>', event.detail)
       setPlayerList(event.detail.playerList)
     }
 
@@ -47,12 +52,19 @@ function App() {
             </ul>
           </div>
           <div className="card">
-            <h1 className="font-bold text-xl"> Number of Words</h1>
+            <h1 className="font-bold text-xl">Number of Words</h1>
+            <span>
+              {
+                playerList.flatMap(({ playerWords }) =>
+                  playerWords.filter(Boolean),
+                ).length
+              }
+            </span>
           </div>
         </div>
         <button
           className="mt-16 p-5 mx-auto text-black font-bold hover:text-xl"
-          // onClick={handleStartGame.bind(null)}
+          onClick={() => actionStartGame()}
         >
           START GAME
         </button>

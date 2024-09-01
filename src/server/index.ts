@@ -5,6 +5,7 @@ import {
   PlayerInfo,
   ServerAction,
   ServerActionAdminUpdatePlayerList,
+  ServerActionStartGame,
 } from '../common/server.action'
 
 const serverId = uuidv4()
@@ -39,6 +40,14 @@ const playerList: Map<string, PlayerInfo> = new Map()
 wss.on('connection', (socket) => {
   const playerId = uuidv4()
 
+  playerList.set(playerId, {
+    username: playerId,
+    playerWords: [],
+    ready: false,
+    isAdmin: false,
+    socket,
+  })
+
   socket.on('message', (receivedData) => {
     const data = JSON.parse(receivedData.toString())
 
@@ -46,7 +55,40 @@ wss.on('connection', (socket) => {
       switch (data.action) {
         case ClientAction.REGISTER_ADMIN:
           admin = socket
+          playerList.set(playerId, {
+            ...playerList.get(playerId)!,
+            isAdmin: true,
+          })
           sendPlayerListAdmin()
+          break
+        case ClientAction.START_GAME:
+          const [impostor, randomWord] = randomPlayerAndWord()
+
+          const actionWord: ServerActionStartGame = {
+            action: ServerAction.GAME_START,
+            payload: {
+              isImpostor: false,
+              word: randomWord,
+            },
+          }
+
+          Array.from(playerList)
+            .filter(
+              ([playerId, { isAdmin }]) => !isAdmin || playerId === impostor,
+            )
+            .forEach(([, { socket: playerSocket }]) =>
+              playerSocket.send(JSON.stringify(actionWord)),
+            )
+
+          const actionImpostor: ServerActionStartGame = {
+            action: ServerAction.GAME_START,
+            payload: {
+              word: '',
+              isImpostor: true,
+            },
+          }
+
+          playerList.get(impostor)!.socket.send(JSON.stringify(actionImpostor))
           break
         case ClientAction.USERNAME_UPDATE:
           playerList.set(playerId, {
@@ -54,6 +96,13 @@ wss.on('connection', (socket) => {
             username: data.payload,
           })
           console.log(`Updated ${playerId} username to "${data.payload}"`)
+          sendPlayerListAdmin()
+          break
+        case ClientAction.WORDS_UPDATE:
+          playerList.set(playerId, {
+            ...playerList.get(playerId)!,
+            playerWords: data.payload,
+          })
           sendPlayerListAdmin()
           break
         default:
@@ -69,13 +118,28 @@ wss.on('connection', (socket) => {
   })
 })
 
+function randomPlayerAndWord() {
+  const playerListArray = Array.from(playerList).filter(
+    ([, { isAdmin }]) => !isAdmin,
+  )
+  let randomPlayer = Math.floor(Math.random() * playerListArray.length)
+  const words = playerListArray.flatMap(([, { playerWords }]) => playerWords)
+  let randomWord = Math.floor(Math.random() * words.length)
+
+  return [playerListArray[randomPlayer][0], words[randomWord]]
+}
+
 function sendPlayerListAdmin() {
   const action: ServerActionAdminUpdatePlayerList = {
     action: ServerAction.ADMIN_UPDATE_PLAYER_LIST,
-    payload: Array.from(playerList).map(([playerId, { username }]) => ({
-      playerId,
-      username,
-    })),
+    payload: Array.from(playerList)
+      .filter(([, { isAdmin }]) => !isAdmin)
+      .map(([playerId, { username, playerWords, ready }]) => ({
+        playerId,
+        username,
+        playerWords,
+        ready,
+      })),
   }
   admin?.send(JSON.stringify(action))
 }

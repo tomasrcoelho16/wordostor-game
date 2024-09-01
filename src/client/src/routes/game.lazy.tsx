@@ -1,14 +1,12 @@
-import { useState } from 'react'
 import logo from '../assets/logo.png'
 import { createLazyFileRoute } from '@tanstack/react-router'
+import { isImpostor, word } from '../services/web-socket.connection'
 
 export const Route = createLazyFileRoute('/game')({
   component: Card,
 })
 
 function Card() {
-  const [word, setWord] = useState('Impostor')
-
   return (
     <>
       <div className="flip-box">
@@ -21,7 +19,9 @@ function Card() {
             <img src={logo} alt="LOGO"></img>
           </div>
           <div className="flip-box-back rounded-2xl flex flex-row justify-center items-center">
-            <p className="text-black font-bold text-lg">{word}</p>
+            <p className="text-black font-bold text-lg">
+              {isImpostor ? 'Impostor' : word}
+            </p>
           </div>
         </div>
       </div>
