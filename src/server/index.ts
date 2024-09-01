@@ -75,7 +75,7 @@ wss.on('connection', (socket) => {
 
           Array.from(playerList)
             .filter(
-              ([playerId, { isAdmin }]) => !isAdmin || playerId != impostor,
+              ([playerId, { isAdmin }]) => !isAdmin && playerId !== impostor,
             )
             .forEach(([, { socket: playerSocket }]) =>
               playerSocket.send(JSON.stringify(actionWord)),
