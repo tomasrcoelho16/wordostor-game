@@ -4,12 +4,8 @@ import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
 import {
   actionWordsUpdate,
   handleUsernameUpdate,
-<<<<<<< HEAD
-  user,
-=======
   preferedUsername,
   preferedWords,
->>>>>>> feat/refactor
 } from '../services/web-socket.connection'
 
 export const Route = createLazyFileRoute('/lobby')({
@@ -17,11 +13,7 @@ export const Route = createLazyFileRoute('/lobby')({
 })
 
 function Menu() {
-<<<<<<< HEAD
-  const [username, setUsername] = useState(user)
-=======
   const [username, setUsername] = useState(preferedUsername || '')
->>>>>>> feat/refactor
   const navigate = useNavigate()
 
   function handleWordsUpdate(ev: FormEvent<HTMLFormElement>) {
