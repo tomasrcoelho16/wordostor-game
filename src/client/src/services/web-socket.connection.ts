@@ -15,8 +15,8 @@ export let word = ''
 export let isImpostor = false
 export let user = ''
 
-export const preferedUsername = localStorage.getItem('PREFERED_USERNAME')
-export const preferedWords: string[] = JSON.parse(
+export let preferedUsername = localStorage.getItem('PREFERED_USERNAME')
+export let preferedWords: string[] = JSON.parse(
   localStorage.getItem('PREFERED_WORDS') || '[]',
 )
 
@@ -91,6 +91,7 @@ export function handleUsernameUpdate(username: string) {
 
   socket.send(JSON.stringify(action))
   localStorage.setItem('PREFERED_USERNAME', username)
+  preferedUsername = username
 }
 
 export function actionWordsUpdate(words: string[]) {
@@ -102,6 +103,7 @@ export function actionWordsUpdate(words: string[]) {
   socket.send(JSON.stringify(action))
   if (words.length === 5) {
     localStorage.setItem('PREFERED_WORDS', JSON.stringify(words))
+    preferedWords = words
   }
 }
 
