@@ -14,6 +14,21 @@ export let alreadySent = false
 export let word = ''
 export let isImpostor = false
 
+export const preferedUsername = localStorage.getItem('PREFERED_USERNAME')
+export const preferedWords: string[] = JSON.parse(
+  localStorage.getItem('PREFERED_WORDS') || '[]',
+)
+
+socket.addEventListener('open', () => {
+  if (preferedUsername) {
+    handleUsernameUpdate(preferedUsername)
+  }
+
+  if (preferedWords) {
+    actionWordsUpdate(preferedWords)
+  }
+})
+
 socket.addEventListener('message', (event) => {
   const data = JSON.parse(event.data)
   if (data) {
@@ -67,6 +82,7 @@ export function handleUsernameUpdate(username: string) {
   }
 
   socket.send(JSON.stringify(action))
+  localStorage.setItem('PREFERED_USERNAME', username)
 }
 
 export function actionWordsUpdate(words: string[]) {
@@ -76,6 +92,9 @@ export function actionWordsUpdate(words: string[]) {
   }
 
   socket.send(JSON.stringify(action))
+  if (words.length === 5) {
+    localStorage.setItem('PREFERED_WORDS', JSON.stringify(words))
+  }
 }
 
 export function actionStartGame() {
