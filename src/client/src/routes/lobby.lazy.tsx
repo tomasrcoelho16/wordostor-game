@@ -4,7 +4,12 @@ import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
 import {
   actionWordsUpdate,
   handleUsernameUpdate,
+<<<<<<< HEAD
   user,
+=======
+  preferedUsername,
+  preferedWords,
+>>>>>>> feat/refactor
 } from '../services/web-socket.connection'
 
 export const Route = createLazyFileRoute('/lobby')({
@@ -12,7 +17,11 @@ export const Route = createLazyFileRoute('/lobby')({
 })
 
 function Menu() {
+<<<<<<< HEAD
   const [username, setUsername] = useState(user)
+=======
+  const [username, setUsername] = useState(preferedUsername || '')
+>>>>>>> feat/refactor
   const navigate = useNavigate()
 
   function handleWordsUpdate(ev: FormEvent<HTMLFormElement>) {
@@ -63,16 +72,18 @@ function Menu() {
         onSubmit={handleWordsUpdate}
       >
         <label className="text-black font-bold">Pick 3 to 5 words</label>
-        {['Pudim', 'Abacate', 'Macaca', 'Calistenia', 'Futsal'].map(
-          (exampleWord, index) => (
-            <input
-              key={exampleWord}
-              name={`word_${index}`}
-              placeholder={exampleWord}
-              className="input"
-            />
-          ),
-        )}
+        {(preferedWords.length > 0
+          ? preferedWords
+          : ['Pudim', 'Abacate', 'Macaca', 'Calistenia', 'Futsal']
+        ).map((exampleWord, index) => (
+          <input
+            key={exampleWord}
+            name={`word_${index}`}
+            placeholder={exampleWord}
+            defaultValue={preferedWords.length > 0 ? exampleWord : undefined}
+            className="input"
+          />
+        ))}
         <button className="mt-12S text-xl text-black p-2 self-center hover:font-bold">
           Update
         </button>
