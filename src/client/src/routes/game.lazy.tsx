@@ -1,12 +1,29 @@
 import logo from '../assets/logo.png'
-import { createLazyFileRoute } from '@tanstack/react-router'
+import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
 import { isImpostor, word } from '../services/web-socket.connection'
+import { useEffect } from 'react'
 
 export const Route = createLazyFileRoute('/game')({
   component: Card,
 })
 
 function Card() {
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const handler = () => {
+      navigate({
+        to: '/lobby',
+      })
+    }
+
+    document.addEventListener('END_GAME', handler)
+
+    return () => {
+      document.removeEventListener('END_GAME', handler)
+    }
+  }, [navigate])
+
   return (
     <>
       <div className="flip-box">

@@ -5,6 +5,7 @@ import {
   PlayerInfo,
   ServerAction,
   ServerActionAdminUpdatePlayerList,
+  ServerActionEndGame,
   ServerActionStartGame,
 } from '../common/server.action'
 
@@ -41,7 +42,7 @@ wss.on('connection', (socket) => {
   const playerId = uuidv4()
 
   playerList.set(playerId, {
-    username: playerId,
+    username: '',
     playerWords: [],
     ready: false,
     isAdmin: false,
@@ -63,7 +64,7 @@ wss.on('connection', (socket) => {
           break
         case ClientAction.START_GAME:
           const [impostor, randomWord] = randomPlayerAndWord()
-
+          console.log(`word: ${randomWord} for impostor: ${impostor}`)
           const actionWord: ServerActionStartGame = {
             action: ServerAction.GAME_START,
             payload: {
@@ -74,7 +75,7 @@ wss.on('connection', (socket) => {
 
           Array.from(playerList)
             .filter(
-              ([playerId, { isAdmin }]) => !isAdmin || playerId === impostor,
+              ([playerId, { isAdmin }]) => !isAdmin || playerId != impostor,
             )
             .forEach(([, { socket: playerSocket }]) =>
               playerSocket.send(JSON.stringify(actionWord)),
@@ -104,6 +105,14 @@ wss.on('connection', (socket) => {
             playerWords: data.payload,
           })
           sendPlayerListAdmin()
+          break
+        case ClientAction.END_GAME:
+          const action: ServerActionEndGame = {
+            action: ServerAction.GAME_END,
+          }
+          Array.from(playerList).forEach(([, { socket: playerSocket }]) =>
+            playerSocket.send(JSON.stringify(action)),
+          )
           break
         default:
           break

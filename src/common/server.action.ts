@@ -3,6 +3,7 @@ import type { WebSocket } from 'ws'
 export enum ServerAction {
   ADMIN_UPDATE_PLAYER_LIST = 'ADMIN_UPDATE_PLAYER_LIST',
   GAME_START = 'GAME_START',
+  GAME_END = 'GAME_END',
 }
 
 export type PlayerInfo = {
@@ -28,4 +29,8 @@ export type ServerActionStartGame = {
     word: string
     isImpostor: boolean
   }
+}
+
+export type ServerActionEndGame = {
+  action: ServerAction.GAME_END
 }

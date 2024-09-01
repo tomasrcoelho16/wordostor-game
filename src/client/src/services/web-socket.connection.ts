@@ -1,5 +1,6 @@
 import {
   ClientAction,
+  ClientActionEndGame,
   ClientActionRegisterAdmin,
   ClientActionStartGame,
   ClientActionUpdateWords,
@@ -10,9 +11,9 @@ import { ServerAction } from '../../../common/server.action'
 const socket = new WebSocket('ws://localhost:3070')
 
 export let alreadySent = false
-
 export let word = ''
 export let isImpostor = false
+export let user = ''
 
 socket.addEventListener('message', (event) => {
   const data = JSON.parse(event.data)
@@ -32,10 +33,16 @@ socket.addEventListener('message', (event) => {
         isImpostor = data.payload.isImpostor
         document.dispatchEvent(new CustomEvent('START_GAME'))
         break
+      case ServerAction.GAME_END:
+        word = ''
+        isImpostor = false
+        document.dispatchEvent(new CustomEvent('END_GAME'))
+        break
       default:
         console.log(data)
     }
   }
+  console.log(isImpostor)
   console.log('Message from server ', event.data)
 })
 
@@ -61,6 +68,7 @@ export function handleStartGame() {
 }
 
 export function handleUsernameUpdate(username: string) {
+  user = username
   const action: ClientActionUsernameUpdate = {
     action: ClientAction.USERNAME_UPDATE,
     payload: username,
@@ -81,6 +89,14 @@ export function actionWordsUpdate(words: string[]) {
 export function actionStartGame() {
   const action: ClientActionStartGame = {
     action: ClientAction.START_GAME,
+  }
+  socket.send(JSON.stringify(action))
+}
+
+export function actionEndGame() {
+  console.log('Ending Game!')
+  const action: ClientActionEndGame = {
+    action: ClientAction.END_GAME,
   }
   socket.send(JSON.stringify(action))
 }

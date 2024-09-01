@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import logo from '../assets/logo.png'
 import { createLazyFileRoute } from '@tanstack/react-router'
 import {
+  actionEndGame,
   actionStartGame,
   registerAdmin,
 } from '../services/web-socket.connection'
@@ -15,6 +16,7 @@ function App() {
   const [playerList, setPlayerList] = useState<
     ServerActionAdminUpdatePlayerList['payload']
   >([])
+  const [inGame, setInGame] = useState(false)
 
   useEffect(() => {
     registerAdmin()
@@ -45,8 +47,8 @@ function App() {
           <div className="card">
             <h1 className="font-bold text-xl"> Players </h1>
             <ul>
-              {playerList.map(({ username }) => (
-                <li>{username}</li>
+              {playerList.map(({ username }, index) => (
+                <li key={index}>{username}</li>
               ))}
               {playerList.length === 0 && <span>No players yet!</span>}
             </ul>
@@ -62,12 +64,27 @@ function App() {
             </span>
           </div>
         </div>
-        <button
-          className="mt-16 p-5 mx-auto text-black font-bold hover:text-xl"
-          onClick={() => actionStartGame()}
-        >
-          START GAME
-        </button>
+        {!inGame ? (
+          <button
+            className="mt-16 p-5 mx-auto text-black font-bold hover:text-xl"
+            onClick={() => {
+              setInGame(true)
+              actionStartGame()
+            }}
+          >
+            START GAME
+          </button>
+        ) : (
+          <button
+            className="mt-16 p-5 mx-auto text-red-800 font-bold hover:text-xl"
+            onClick={() => {
+              setInGame(false)
+              actionEndGame()
+            }}
+          >
+            END GAME
+          </button>
+        )}
       </div>
     </>
   )

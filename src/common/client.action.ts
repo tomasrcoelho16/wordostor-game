@@ -3,6 +3,7 @@ export enum ClientAction {
   REGISTER_ADMIN = 'REGISTER_ADMIN',
   WORDS_UPDATE = 'WORDS_UPDATE',
   START_GAME = 'START_GAME',
+  END_GAME = 'END_GAME',
 }
 
 export type ClientActionUsernameUpdate = {
@@ -21,4 +22,8 @@ export type ClientActionRegisterAdmin = {
 
 export type ClientActionStartGame = {
   action: ClientAction.START_GAME
+}
+
+export type ClientActionEndGame = {
+  action: ClientAction.END_GAME
 }

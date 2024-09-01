@@ -4,6 +4,7 @@ import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
 import {
   actionWordsUpdate,
   handleUsernameUpdate,
+  user,
 } from '../services/web-socket.connection'
 
 export const Route = createLazyFileRoute('/lobby')({
@@ -11,7 +12,7 @@ export const Route = createLazyFileRoute('/lobby')({
 })
 
 function Menu() {
-  const [username, setUsername] = useState('')
+  const [username, setUsername] = useState(user)
   const navigate = useNavigate()
 
   function handleWordsUpdate(ev: FormEvent<HTMLFormElement>) {
