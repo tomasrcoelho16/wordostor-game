@@ -49,6 +49,8 @@ wss.on('connection', (socket) => {
     socket,
   })
 
+  socket.send(JSON.stringify({ action: 'LOL' }))
+
   socket.on('message', (receivedData) => {
     const data = JSON.parse(receivedData.toString())
 

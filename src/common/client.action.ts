@@ -1,3 +1,7 @@
+export type ClientActionsData =
+  | ClientActionUsernameUpdate
+  | ClientActionUpdateWords
+
 export enum ClientAction {
   USERNAME_UPDATE = 'USERNAME_UPDATE',
   REGISTER_ADMIN = 'REGISTER_ADMIN',

@@ -1,5 +1,10 @@
 import type { WebSocket } from 'ws'
 
+export type ServerActionsData =
+  | ServerActionAdminUpdatePlayerList
+  | ServerActionStartGame
+  | ServerActionEndGame
+
 export enum ServerAction {
   ADMIN_UPDATE_PLAYER_LIST = 'ADMIN_UPDATE_PLAYER_LIST',
   GAME_START = 'GAME_START',

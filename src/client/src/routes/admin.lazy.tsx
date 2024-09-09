@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react'
-import logo from '../assets/logo.png'
+import { useState } from 'react'
 import { createLazyFileRoute } from '@tanstack/react-router'
-import {
-  actionEndGame,
-  actionStartGame,
-  registerAdmin,
-} from '../services/web-socket.connection'
 import { ServerActionAdminUpdatePlayerList } from '../../../common/server.action'
+import { Header } from '../components/header/header'
+import { PlayerList } from '../components/player-list/player-list'
+import classes from './admin.module.css'
+import { WordList } from '../components/word-list/word-list'
 
 export const Route = createLazyFileRoute('/admin')({
   component: App,
@@ -18,27 +16,29 @@ function App() {
   >([])
   const [inGame, setInGame] = useState(false)
 
-  useEffect(() => {
-    registerAdmin()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handler = (event: any) => {
-      console.log('asdfjasdkfhasdfhasd> >>>>>>>>>>>', event.detail)
-      setPlayerList(event.detail.playerList)
-    }
+  // useEffect(() => {
+  //   registerAdmin()
+  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //   const handler = (event: any) => {
+  //     console.log('asdfjasdkfhasdfhasd> >>>>>>>>>>>', event.detail)
+  //     setPlayerList(event.detail.playerList)
+  //   }
 
-    document.addEventListener('UPDATE_PLAYER_LIST', handler)
+  //   document.addEventListener('UPDATE_PLAYER_LIST', handler)
 
-    return () => {
-      document.removeEventListener('UPDATE_PLAYER_LIST', handler)
-    }
-  }, [])
+  //   return () => {
+  //     document.removeEventListener('UPDATE_PLAYER_LIST', handler)
+  //   }
+  // }, [])
 
   return (
     <>
-      <div className="flex justify-center">
-        <img src={logo} alt="Logo" />
+      <Header />
+      <div className={classes.body}>
+        <PlayerList />
+        <WordList />
       </div>
-      <div className="flex flex-col justify-center">
+      {/* <div className="flex flex-col justify-center">
         <div className="flex flex-row justify-evenly ">
           <div className="card">
             <h1 className="font-bold text-xl"> Number of Players</h1>
@@ -85,7 +85,7 @@ function App() {
             END GAME
           </button>
         )}
-      </div>
+      </div> */}
     </>
   )
 }

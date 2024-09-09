@@ -1,0 +1,5 @@
+.body {
+  @apply grid p-6 gap-4;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(auto-fit, minmax(1px, 1fr));
+}
