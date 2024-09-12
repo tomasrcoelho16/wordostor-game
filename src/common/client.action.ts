@@ -3,31 +3,31 @@ export type ClientActionsData =
   | ClientActionUpdateWords
 
 export enum ClientAction {
-  USERNAME_UPDATE = 'USERNAME_UPDATE',
+  CLIENT_USERNAME_UPDATE = 'CLIENT_USERNAME_UPDATE',
+  CLIENT_WORDS_UPDATE = 'CLIENT_WORDS_UPDATE',
   REGISTER_ADMIN = 'REGISTER_ADMIN',
-  WORDS_UPDATE = 'WORDS_UPDATE',
   START_GAME = 'START_GAME',
   END_GAME = 'END_GAME',
 }
 
 export type ClientActionUsernameUpdate = {
-  action: ClientAction.USERNAME_UPDATE
+  type: ClientAction.CLIENT_USERNAME_UPDATE
   payload: string
 }
 
 export type ClientActionUpdateWords = {
-  action: ClientAction.WORDS_UPDATE
+  type: ClientAction.CLIENT_WORDS_UPDATE
   payload: string[]
 }
 
 export type ClientActionRegisterAdmin = {
-  action: ClientAction.REGISTER_ADMIN
+  type: ClientAction.REGISTER_ADMIN
 }
 
 export type ClientActionStartGame = {
-  action: ClientAction.START_GAME
+  type: ClientAction.START_GAME
 }
 
 export type ClientActionEndGame = {
-  action: ClientAction.END_GAME
+  type: ClientAction.END_GAME
 }

@@ -11,25 +11,29 @@ export enum ServerAction {
   GAME_END = 'GAME_END',
 }
 
-export type PlayerInfo = {
-  username: string
-  playerWords: string[]
+export type Player = PlayerInfo & PlayerExtra
+
+export type PlayerExtra = {
   ready: boolean
   isAdmin: boolean
   socket: WebSocket
 }
 
+export type PlayerInfo = {
+  id: string
+  name: string
+  points: number
+  color: string
+  playerWords: string[]
+}
+
 export type ServerActionAdminUpdatePlayerList = {
-  action: ServerAction.ADMIN_UPDATE_PLAYER_LIST
-  payload: Array<
-    {
-      playerId: string
-    } & Omit<PlayerInfo, 'socket' | 'isAdmin'>
-  >
+  type: ServerAction.ADMIN_UPDATE_PLAYER_LIST
+  payload: Array<PlayerInfo>
 }
 
 export type ServerActionStartGame = {
-  action: ServerAction.GAME_START
+  type: ServerAction.GAME_START
   payload: {
     word: string
     isImpostor: boolean
@@ -37,5 +41,5 @@ export type ServerActionStartGame = {
 }
 
 export type ServerActionEndGame = {
-  action: ServerAction.GAME_END
+  type: ServerAction.GAME_END
 }
