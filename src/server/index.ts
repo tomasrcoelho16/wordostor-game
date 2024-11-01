@@ -1,7 +1,12 @@
 import { WebSocketServer, WebSocket } from 'ws'
-import { ServerAckAction, ServerAction } from '../common/constants'
 import { v4 as uuidv4 } from 'uuid'
 import { ClientAction } from '../common/client.action'
+import {
+  PlayerInfo,
+  ServerAction,
+  ServerActionAdminUpdatePlayerList,
+  ServerActionStartGame,
+} from '../common/server.action'
 
 const serverId = uuidv4()
 
@@ -28,57 +33,113 @@ const wss = new WebSocketServer({
   },
 })
 
-type PlayerInfo = {
-  socket: WebSocket
-  username: string
-  playerWords: string[]
-}
-
 // const adminList: WebSocket
+let admin: WebSocket | undefined
 const playerList: Map<string, PlayerInfo> = new Map()
 
 wss.on('connection', (socket) => {
   const playerId = uuidv4()
 
-  const data: ServerAckAction = {
-    action: ServerAction.SERVER_ACK_CONNECTION,
-    payload: {
-      serverId,
-      playerId,
-    },
-  }
-
-  socket.send(JSON.stringify(data))
+  playerList.set(playerId, {
+    username: playerId,
+    playerWords: [],
+    ready: false,
+    isAdmin: false,
+    socket,
+  })
 
   socket.on('message', (receivedData) => {
-    console.log(`just received ${receivedData}`)
-
     const data = JSON.parse(receivedData.toString())
 
     if (data && data.hasOwnProperty('action')) {
-      const playerId = data.payload.playerId
       switch (data.action) {
-        case ClientAction.CLIENT_ACK_CONNECTION:
-          if (!playerList.has(playerId)) {
-            playerList.set(playerId, {
-              socket,
-              username: '',
-              playerWords: [],
-            })
+        case ClientAction.REGISTER_ADMIN:
+          admin = socket
+          playerList.set(playerId, {
+            ...playerList.get(playerId)!,
+            isAdmin: true,
+          })
+          sendPlayerListAdmin()
+          break
+        case ClientAction.START_GAME:
+          const [impostor, randomWord] = randomPlayerAndWord()
+
+          const actionWord: ServerActionStartGame = {
+            action: ServerAction.GAME_START,
+            payload: {
+              isImpostor: false,
+              word: randomWord,
+            },
           }
+
+          Array.from(playerList)
+            .filter(
+              ([playerId, { isAdmin }]) => !isAdmin || playerId === impostor,
+            )
+            .forEach(([, { socket: playerSocket }]) =>
+              playerSocket.send(JSON.stringify(actionWord)),
+            )
+
+          const actionImpostor: ServerActionStartGame = {
+            action: ServerAction.GAME_START,
+            payload: {
+              word: '',
+              isImpostor: true,
+            },
+          }
+
+          playerList.get(impostor)!.socket.send(JSON.stringify(actionImpostor))
           break
         case ClientAction.USERNAME_UPDATE:
-          const playerInfo = playerList.get(playerId)
-          if (playerList.has(playerId) && playerInfo) {
-            playerList.set(playerId, {
-              ...playerInfo,
-              username: data.payload.username,
-            })
-          }
+          playerList.set(playerId, {
+            ...playerList.get(playerId)!,
+            username: data.payload,
+          })
+          console.log(`Updated ${playerId} username to "${data.payload}"`)
+          sendPlayerListAdmin()
+          break
+        case ClientAction.WORDS_UPDATE:
+          playerList.set(playerId, {
+            ...playerList.get(playerId)!,
+            playerWords: data.payload,
+          })
+          sendPlayerListAdmin()
           break
         default:
           break
       }
     }
   })
+
+  socket.on('close', () => {
+    console.log(`Player ${playerId} left!`)
+    playerList.delete(playerId)
+    sendPlayerListAdmin()
+  })
 })
+
+function randomPlayerAndWord() {
+  const playerListArray = Array.from(playerList).filter(
+    ([, { isAdmin }]) => !isAdmin,
+  )
+  let randomPlayer = Math.floor(Math.random() * playerListArray.length)
+  const words = playerListArray.flatMap(([, { playerWords }]) => playerWords)
+  let randomWord = Math.floor(Math.random() * words.length)
+
+  return [playerListArray[randomPlayer][0], words[randomWord]]
+}
+
+function sendPlayerListAdmin() {
+  const action: ServerActionAdminUpdatePlayerList = {
+    action: ServerAction.ADMIN_UPDATE_PLAYER_LIST,
+    payload: Array.from(playerList)
+      .filter(([, { isAdmin }]) => !isAdmin)
+      .map(([playerId, { username, playerWords, ready }]) => ({
+        playerId,
+        username,
+        playerWords,
+        ready,
+      })),
+  }
+  admin?.send(JSON.stringify(action))
+}

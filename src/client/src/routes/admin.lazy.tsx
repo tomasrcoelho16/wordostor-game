@@ -1,13 +1,35 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import logo from '../assets/logo.png'
 import { createLazyFileRoute } from '@tanstack/react-router'
+import {
+  actionStartGame,
+  registerAdmin,
+} from '../services/web-socket.connection'
+import { ServerActionAdminUpdatePlayerList } from '../../../common/server.action'
 
 export const Route = createLazyFileRoute('/admin')({
   component: App,
 })
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [playerList, setPlayerList] = useState<
+    ServerActionAdminUpdatePlayerList['payload']
+  >([])
+
+  useEffect(() => {
+    registerAdmin()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handler = (event: any) => {
+      console.log('asdfjasdkfhasdfhasd> >>>>>>>>>>>', event.detail)
+      setPlayerList(event.detail.playerList)
+    }
+
+    document.addEventListener('UPDATE_PLAYER_LIST', handler)
+
+    return () => {
+      document.removeEventListener('UPDATE_PLAYER_LIST', handler)
+    }
+  }, [])
 
   return (
     <>
@@ -18,20 +40,31 @@ function App() {
         <div className="flex flex-row justify-evenly ">
           <div className="card">
             <h1 className="font-bold text-xl"> Number of Players</h1>
-            <button onClick={() => setCount((count) => count + 1)}>
-              count is {count}
-            </button>
+            <span>{playerList.length}</span>
           </div>
           <div className="card">
             <h1 className="font-bold text-xl"> Players </h1>
+            <ul>
+              {playerList.map(({ username }) => (
+                <li>{username}</li>
+              ))}
+              {playerList.length === 0 && <span>No players yet!</span>}
+            </ul>
           </div>
           <div className="card">
-            <h1 className="font-bold text-xl"> Number of Words</h1>
+            <h1 className="font-bold text-xl">Number of Words</h1>
+            <span>
+              {
+                playerList.flatMap(({ playerWords }) =>
+                  playerWords.filter(Boolean),
+                ).length
+              }
+            </span>
           </div>
         </div>
         <button
           className="mt-16 p-5 mx-auto text-black font-bold hover:text-xl"
-          // onClick={handleStartGame.bind(null)}
+          onClick={() => actionStartGame()}
         >
           START GAME
         </button>
