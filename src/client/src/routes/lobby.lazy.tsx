@@ -1,19 +1,13 @@
 import { FormEvent, useEffect, useState } from 'react'
 import logo from '../assets/logo.png'
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
-import {
-  actionWordsUpdate,
-  handleUsernameUpdate,
-  preferedUsername,
-  preferedWords,
-} from '../services/web-socket.connection'
 
 export const Route = createLazyFileRoute('/lobby')({
   component: Menu,
 })
 
 function Menu() {
-  const [username, setUsername] = useState(preferedUsername || '')
+  const [username, setUsername] = useState('2')
   const navigate = useNavigate()
 
   function handleWordsUpdate(ev: FormEvent<HTMLFormElement>) {
@@ -21,7 +15,7 @@ function Menu() {
     const data = new FormData(ev.currentTarget)
     const wordsObj = Object.fromEntries(data)
     const words = Object.values(wordsObj) as string[]
-    actionWordsUpdate(words.filter(Boolean))
+    // actionWordsUpdate(words.filter(Boolean))
   }
 
   useEffect(() => {
@@ -54,7 +48,7 @@ function Menu() {
         />
         <button
           className="mt-12S text-xl text-black p-2 self-center hover:font-bold"
-          onClick={handleUsernameUpdate.bind(null, username)}
+          // onClick={handleUsernameUpdate.bind(null, username)}
         >
           Update
         </button>
@@ -64,7 +58,7 @@ function Menu() {
         onSubmit={handleWordsUpdate}
       >
         <label className="text-black font-bold">Pick 3 to 5 words</label>
-        {(preferedWords.length > 0
+        {/* {(preferedWords.length > 0
           ? preferedWords
           : ['Pudim', 'Abacate', 'Macaca', 'Calistenia', 'Futsal']
         ).map((exampleWord, index) => (
@@ -75,7 +69,7 @@ function Menu() {
             defaultValue={preferedWords.length > 0 ? exampleWord : undefined}
             className="input"
           />
-        ))}
+        ))} */}
         <button className="mt-12S text-xl text-black p-2 self-center hover:font-bold">
           Update
         </button>
